@@ -5,7 +5,7 @@ require 'jbuilder'
 
 class MsgPackTest < ActiveSupport::TestCase
   test "single key" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.content "hello"
     end
   
@@ -13,7 +13,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
 
   test "single key with false value" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.content false
     end
 
@@ -21,7 +21,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
 
   test "single key with nil value" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.content nil
     end
 
@@ -30,7 +30,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
 
   test "multiple keys" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.title "hello"
       msgpack.content "world"
     end
@@ -44,7 +44,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "extracting from object" do
     person = Struct.new(:name, :age).new("David", 32)
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.extract! person, :name, :age
     end
   
@@ -57,7 +57,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "extracting from object using call style for 1.9" do
     person = Struct.new(:name, :age).new("David", 32)
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.(person, :name, :age)
     end
   
@@ -68,7 +68,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
   
   test "nesting single child with block" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.author do |msgpack|
         msgpack.name "David"
         msgpack.age  32
@@ -82,7 +82,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
   
   test "nesting multiple children with block" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.comments do |msgpack|
         msgpack.child! { |msgpack| msgpack.content "hello" }
         msgpack.child! { |msgpack| msgpack.content "world" }
@@ -104,7 +104,7 @@ class MsgPackTest < ActiveSupport::TestCase
       end
     end.new("David", 32)
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.author person, :name, :age
     end
   
@@ -117,7 +117,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "nesting multiple children from array" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.comments comments, :content
     end
   
@@ -131,7 +131,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "nesting multiple children from array when child array is empty" do
     comments = []
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.name "Parent"
       msgpack.comments comments, :content
     end
@@ -145,7 +145,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "nesting multiple children from array with inline loop" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.comments comments do |msgpack, comment|
         msgpack.content comment.content
       end
@@ -161,7 +161,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "nesting multiple children from array with inline loop on root" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.(comments) do |msgpack, comment|
         msgpack.content comment.content
       end
@@ -174,7 +174,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
   
   test "array nested inside nested hash" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.author do |msgpack|
         msgpack.name "David"
         msgpack.age  32
@@ -193,7 +193,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
   
   test "array nested inside array" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.comments do |msgpack|
         msgpack.child! do |msgpack|
           msgpack.authors do |msgpack|
@@ -211,7 +211,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "top-level array" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
 
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.array!(comments) do |msgpack, comment|
         msgpack.content comment.content
       end
@@ -226,7 +226,7 @@ class MsgPackTest < ActiveSupport::TestCase
   test "empty top-level array" do
     comments = []
   
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.array!(comments) do |msgpack, comment|
         msgpack.content comment.content
       end
@@ -236,7 +236,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
   
   test "dynamically set a key/value" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.set!(:each, "stuff")
     end
   
@@ -244,7 +244,7 @@ class MsgPackTest < ActiveSupport::TestCase
   end
 
   test "dynamically set a key/nested child with block" do
-    msgpack = Jbuilder.encode(:format => :msgpack, :root => 'root') do |msgpack|
+    msgpack = Jbuilder.encode(:msgpack, :root => 'root') do |msgpack|
       msgpack.set!(:author) do |msgpack|
         msgpack.name "David"
         msgpack.age 32

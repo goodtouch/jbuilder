@@ -9,8 +9,8 @@ require 'msgpack'
 
 class Jbuilder < BlankSlate
   # Yields a builder and +automatically+ turns the result into a JSON string
-  def self.encode(options = {})
-    new._tap { |jbuilder| yield jbuilder }.target!(options)
+  def self.encode(format = :json, options = {})
+    new._tap { |jbuilder| yield jbuilder }.target!(format.to_sym, options)
   end
 
   define_method(:__class__, find_hidden_method(:class))
@@ -134,12 +134,11 @@ class Jbuilder < BlankSlate
   end
 
   # Encodes the current builder as JSON.
-  def target!(options = {})
-
+  def target!(format = :json, options = {})
+  
     options = options.dup
-    options[:format] ||= :json
-
-    case options[:format]
+  
+    case format
     when :json
       ActiveSupport::JSON.encode(@attributes)
     when :xml

@@ -5,7 +5,7 @@ require 'jbuilder'
 
 class XmlTest < ActiveSupport::TestCase
   test "single key" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.content "hello"
     end
   
@@ -13,7 +13,7 @@ class XmlTest < ActiveSupport::TestCase
   end
 
   test "single key with false value" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.content false
     end
 
@@ -21,7 +21,7 @@ class XmlTest < ActiveSupport::TestCase
   end
 
   test "single key with nil value" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.content nil
     end
 
@@ -30,7 +30,7 @@ class XmlTest < ActiveSupport::TestCase
   end
 
   test "multiple keys" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.title "hello"
       xml.content "world"
     end
@@ -44,7 +44,7 @@ class XmlTest < ActiveSupport::TestCase
   test "extracting from object" do
     person = Struct.new(:name, :age).new("David", 32)
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.extract! person, :name, :age
     end
   
@@ -57,7 +57,7 @@ class XmlTest < ActiveSupport::TestCase
   test "extracting from object using call style for 1.9" do
     person = Struct.new(:name, :age).new("David", 32)
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.(person, :name, :age)
     end
   
@@ -68,7 +68,7 @@ class XmlTest < ActiveSupport::TestCase
   end
   
   test "nesting single child with block" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.author do |xml|
         xml.name "David"
         xml.age  32
@@ -82,7 +82,7 @@ class XmlTest < ActiveSupport::TestCase
   end
   
   test "nesting multiple children with block" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.comments do |xml|
         xml.child! { |xml| xml.content "hello" }
         xml.child! { |xml| xml.content "world" }
@@ -104,7 +104,7 @@ class XmlTest < ActiveSupport::TestCase
       end
     end.new("David", 32)
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.author person, :name, :age
     end
   
@@ -117,7 +117,7 @@ class XmlTest < ActiveSupport::TestCase
   test "nesting multiple children from array" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.comments comments, :content
     end
   
@@ -131,7 +131,7 @@ class XmlTest < ActiveSupport::TestCase
   test "nesting multiple children from array when child array is empty" do
     comments = []
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.name "Parent"
       xml.comments comments, :content
     end
@@ -145,7 +145,7 @@ class XmlTest < ActiveSupport::TestCase
   test "nesting multiple children from array with inline loop" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.comments comments do |xml, comment|
         xml.content comment.content
       end
@@ -161,7 +161,7 @@ class XmlTest < ActiveSupport::TestCase
   test "nesting multiple children from array with inline loop on root" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.(comments) do |xml, comment|
         xml.content comment.content
       end
@@ -174,7 +174,7 @@ class XmlTest < ActiveSupport::TestCase
   end
   
   test "array nested inside nested hash" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.author do |xml|
         xml.name "David"
         xml.age  32
@@ -193,7 +193,7 @@ class XmlTest < ActiveSupport::TestCase
   end
   
   test "array nested inside array" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.comments do |xml|
         xml.child! do |xml|
           xml.authors do |xml|
@@ -211,7 +211,7 @@ class XmlTest < ActiveSupport::TestCase
   test "top-level array" do
     comments = [ Struct.new(:content, :id).new("hello", 1), Struct.new(:content, :id).new("world", 2) ]
 
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.array!(comments) do |xml, comment|
         xml.content comment.content
       end
@@ -226,7 +226,7 @@ class XmlTest < ActiveSupport::TestCase
   test "empty top-level array" do
     comments = []
   
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.array!(comments) do |xml, comment|
         xml.content comment.content
       end
@@ -236,7 +236,7 @@ class XmlTest < ActiveSupport::TestCase
   end
   
   test "dynamically set a key/value" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.set!(:each, "stuff")
     end
   
@@ -244,7 +244,7 @@ class XmlTest < ActiveSupport::TestCase
   end
 
   test "dynamically set a key/nested child with block" do
-    xml = Jbuilder.encode(:format => :xml, :root => 'root') do |xml|
+    xml = Jbuilder.encode(:xml, :root => 'root') do |xml|
       xml.set!(:author) do |xml|
         xml.name "David"
         xml.age 32
