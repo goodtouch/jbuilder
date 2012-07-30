@@ -2,12 +2,15 @@ require 'blankslate'
 require 'active_support/ordered_hash'
 require 'active_support/core_ext/array/access'
 require 'active_support/core_ext/enumerable'
+require 'active_support/core_ext/hash/conversions'
 require 'active_support/json'
+require 'active_support/xml_mini'
+require 'msgpack'
 
 class Jbuilder < BlankSlate
-  # Yields a builder and automatically turns the result into a JSON string
-  def self.encode
-    new._tap { |jbuilder| yield jbuilder }.target!
+  # Yields a builder and +automatically+ turns the result into a JSON string
+  def self.encode(options = {})
+    new._tap { |jbuilder| yield jbuilder }.target!(options)
   end
 
   define_method(:__class__, find_hidden_method(:class))
@@ -131,8 +134,19 @@ class Jbuilder < BlankSlate
   end
 
   # Encodes the current builder as JSON.
-  def target!
-    ActiveSupport::JSON.encode @attributes
+  def target!(options = {})
+
+    options = options.dup
+    options[:format] ||= :json
+
+    case options[:format]
+    when :json
+      ActiveSupport::JSON.encode(@attributes)
+    when :xml
+      @attributes.to_xml(options)
+    when :msgpack
+      @attributes.to_msgpack
+    end
   end
 
   private
